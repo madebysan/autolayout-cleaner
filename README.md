@@ -6,6 +6,10 @@
 One click to flatten. One undo to revert.</p>
 <p align="center">Figma Plugin</p>
 
+<p align="center">
+  <img src="assets/screenshot.png" width="600" alt="Auto Layout Cleaner — plugin UI">
+</p>
+
 ---
 
 ## What It Does
