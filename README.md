@@ -5,6 +5,7 @@
 <p align="center">Find and remove redundant wrapper frames in your autolayout hierarchies.<br>
 One click to flatten. One undo to revert.</p>
 <p align="center">Figma Plugin</p>
+<p align="center"><a href="https://www.figma.com/community/plugin/1608984541189092337/auto-layout-cleaner"><strong>Install from Figma Community</strong></a></p>
 
 <p align="center">
   <img src="assets/screenshot.png" width="600" alt="Auto Layout Cleaner — plugin UI">
