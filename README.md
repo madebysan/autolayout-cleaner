@@ -53,3 +53,11 @@ A frame is flagged for removal when **all** of these are true:
 - **Component internals** — modifying would break all instances
 - **Direction changers** — a horizontal frame inside a vertical parent is intentional structure, not redundancy
 - **Gap changers** — frames with different `itemSpacing` than their parent create spacing groups on purpose
+
+## Feedback
+
+Found a bug or have a feature idea? [Open an issue](https://github.com/madebysan/autolayout-cleaner/issues).
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
