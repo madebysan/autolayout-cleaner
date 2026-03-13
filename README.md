@@ -8,14 +8,14 @@ One click to flatten. One undo to revert.</p>
 <p align="center"><a href="https://www.figma.com/community/plugin/1608984541189092337/auto-layout-cleaner"><strong>Install from Figma Community</strong></a></p>
 
 <p align="center">
-  <img src="assets/screenshot.png" width="600" alt="Auto Layout Cleaner — plugin UI">
+  <img src="assets/screenshot.png" width="600" alt="Auto Layout Cleaner – plugin UI">
 </p>
 
 ---
 
 ## What It Does
 
-Scans selected frames (or the entire page) for **redundant wrapper frames** — autolayout frames that sit between a parent and its content but add nothing visually. It reparents the children up to the grandparent and deletes the empty wrapper. The UI stays identical.
+Scans selected frames (or the entire page) for **redundant wrapper frames** – autolayout frames that sit between a parent and its content but add nothing visually. It reparents the children up to the grandparent and deletes the empty wrapper. The UI stays identical.
 
 ## What Counts as Redundant
 
@@ -49,10 +49,10 @@ A frame is flagged for removal when **all** of these are true:
 
 ## Limitations
 
-- **Instance internals** — read-only, can't reparent children inside instances
-- **Component internals** — modifying would break all instances
-- **Direction changers** — a horizontal frame inside a vertical parent is intentional structure, not redundancy
-- **Gap changers** — frames with different `itemSpacing` than their parent create spacing groups on purpose
+- **Instance internals** – read-only, can't reparent children inside instances
+- **Component internals** – modifying would break all instances
+- **Direction changers** – a horizontal frame inside a vertical parent is intentional structure, not redundancy
+- **Gap changers** – frames with different `itemSpacing` than their parent create spacing groups on purpose
 
 ## Feedback
 
