@@ -1,17 +1,21 @@
-<p align="center">
-  <img src="assets/app-icon.png" width="128" height="128" alt="Auto Layout Cleaner icon">
-</p>
-<h1 align="center">Auto Layout Cleaner</h1>
-<p align="center">Find and remove redundant wrapper frames in your autolayout hierarchies.<br>
+<p><img src="assets/app-icon.png" width="128" height="128" alt="Auto Layout Cleaner icon"></p>
+
+<h1>Auto Layout Cleaner</h1>
+
+<p>Find and remove redundant wrapper frames in your autolayout hierarchies.<br>
 One click to flatten. One undo to revert.</p>
-<p align="center">Figma Plugin</p>
-<p align="center"><a href="https://www.figma.com/community/plugin/1608984541189092337/auto-layout-cleaner"><strong>Install from Figma Community</strong></a></p>
 
-<p align="center">
-  <img src="assets/screenshot.png" width="600" alt="Auto Layout Cleaner – plugin UI">
+<p><strong>Figma Plugin</strong></p>
+
+<p>
+  <img src="https://img.shields.io/badge/Figma-f24e1e" alt="Figma">
+  <img src="https://img.shields.io/badge/JavaScript-f7df1e" alt="JavaScript">
+  <img src="https://img.shields.io/badge/HTML-e34f26" alt="HTML">
 </p>
 
----
+<p><a href="https://www.figma.com/community/plugin/1608984541189092337/auto-layout-cleaner">Install from Figma Community</a></p>
+
+![Auto Layout Cleaner – plugin UI](assets/screenshot.png)
 
 ## What It Does
 
