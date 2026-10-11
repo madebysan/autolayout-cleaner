@@ -3,7 +3,7 @@
 // A wrapper is redundant if it adds no visual properties, no padding, and
 // (for multi-child wrappers) matches the parent's layout direction, gap, and wrap.
 
-figma.showUI(__html__, { width: 320, height: 420, themeColors: true });
+figma.showUI(__html__, { width: 320, height: 470, themeColors: true });
 
 // ============================================================================
 // REDUNDANCY CHECK
@@ -68,6 +68,20 @@ function isRedundant(frame, parent) {
   // Must have at least 1 child (empty frames aren't "wrappers")
   if (!frame.children || frame.children.length === 0) return false;
 
+  // Hidden wrapper: removing it would make its children visible
+  if (frame.visible === false) return false;
+
+  // Absolute positioning: the wrapper or a child sits outside the flow,
+  // so moving layers to the grandparent would change their position
+  if (frame.layoutPositioning === 'ABSOLUTE') return false;
+  for (var ci = 0; ci < frame.children.length; ci++) {
+    if (frame.children[ci].layoutPositioning === 'ABSOLUTE') return false;
+  }
+
+  // Prototype interactions and export settings would be deleted with the wrapper
+  if (frame.reactions && frame.reactions.length > 0) return false;
+  if (frame.exportSettings && frame.exportSettings.length > 0) return false;
+
   // No visible fills, strokes, effects
   if (hasVisiblePaints(frame.fills)) return false;
   if (hasVisiblePaints(frame.strokes)) return false;
@@ -126,6 +140,12 @@ function isRedundant(frame, parent) {
     if (!hugsH && wrapHoriz !== parHoriz) return false;
     if (!hugsV && wrapVert !== parVert) return false;
 
+    // A fixed-size wrapper reserves its own size; the child would only keep its
+    // smaller size, shifting neighbors. Only flatten when the sizes already match.
+    var only = frame.children[0];
+    if (frame.layoutSizingHorizontal === 'FIXED' && Math.abs(only.width - frame.width) > 0.5) return false;
+    if (frame.layoutSizingVertical === 'FIXED' && Math.abs(only.height - frame.height) > 0.5) return false;
+
     return true;
   }
 
@@ -144,9 +164,22 @@ function isRedundant(frame, parent) {
   var parentWrap = parent.layoutWrap || 'NO_WRAP';
   if (frameWrap !== parentWrap) return false;
 
+  // Wrapped rows: the gap between rows must match too
+  if (frameWrap === 'WRAP' && (frame.counterAxisSpacing || 0) !== (parent.counterAxisSpacing || 0)) return false;
+
   // Alignment must also match for multi-child
   if (primaryAlign !== parentPrimaryAlign) return false;
   if (counterAlign !== parentCounterAlign) return false;
+
+  // Sizing: along the parent's main axis the wrapper must hug its children.
+  // A filling or fixed-size wrapper reserves extra space, and removing it
+  // would pull later siblings closer. Across the axis, fixed sizes can
+  // change the parent's size, so only hug or fill are safe.
+  var parentIsHoriz = parent.layoutMode === 'HORIZONTAL';
+  var mainSizing = parentIsHoriz ? frame.layoutSizingHorizontal : frame.layoutSizingVertical;
+  var crossSizing = parentIsHoriz ? frame.layoutSizingVertical : frame.layoutSizingHorizontal;
+  if (mainSizing !== 'HUG') return false;
+  if (crossSizing === 'FIXED') return false;
 
   return true;
 }
@@ -165,16 +198,19 @@ function getDepth(node) {
   return depth;
 }
 
-async function scanTree(node, results, scannedIds) {
-  // When we hit an INSTANCE, we can't reparent inside it directly —
-  // but we CAN follow it to its main component and clean that instead.
-  // All instances auto-update when the source component changes.
+// opts.includeComponents: follow instances to their main components (off by default).
+// viaComponent: name of the main component a result was found in, if any.
+async function scanTree(node, results, scannedIds, opts, viaComponent) {
+  // When we hit an INSTANCE, we can't reparent inside it directly.
+  // Only if the user opted in, follow it to its main component and clean that instead:
+  // every instance in the file updates, including ones outside the selection.
   if (node.type === 'INSTANCE') {
+    if (!opts.includeComponents) return;
     try {
       var mainComp = await node.getMainComponentAsync();
       if (mainComp && !scannedIds[mainComp.id]) {
         scannedIds[mainComp.id] = true;
-        await scanTree(mainComp, results, scannedIds);
+        await scanTree(mainComp, results, scannedIds, opts, mainComp.name);
       }
     } catch (e) {
       // Main component not accessible (remote library, deleted, etc.) — skip
@@ -191,7 +227,7 @@ async function scanTree(node, results, scannedIds) {
       kids.push(node.children[i]);
     }
     for (var j = 0; j < kids.length; j++) {
-      await scanTree(kids[j], results, scannedIds);
+      await scanTree(kids[j], results, scannedIds, opts, viaComponent);
     }
   }
 
@@ -203,7 +239,8 @@ async function scanTree(node, results, scannedIds) {
         name: node.name,
         parentName: node.parent.name,
         childCount: node.children.length,
-        depth: getDepth(node)
+        depth: getDepth(node),
+        viaComponent: viaComponent || null
       });
     }
   }
@@ -358,8 +395,9 @@ figma.ui.onmessage = async function(msg) {
 
     var results = [];
     var scannedIds = {};
+    var opts = { includeComponents: msg.includeComponents === true };
     for (var s = 0; s < roots.length; s++) {
-      await scanTree(roots[s], results, scannedIds);
+      await scanTree(roots[s], results, scannedIds, opts, null);
     }
 
     lastScanResults = results;

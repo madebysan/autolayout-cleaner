@@ -114,6 +114,26 @@
       gap: 8px;
     }
 
+    .components-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: var(--figma-color-text, rgba(255, 255, 255, 0.9));
+      cursor: pointer;
+    }
+
+    .components-toggle input {
+      margin: 1px 0 0;
+    }
+
+    .components-toggle small {
+      font-size: 10px;
+      color: var(--figma-color-text-secondary, rgba(255, 255, 255, 0.5));
+    }
+
     .btn {
       flex: 1;
       padding: 6px 12px;
@@ -342,6 +362,10 @@
       <button class="btn" id="btn-scan-selection" onclick="scan('selection')">Scan Selection</button>
       <button class="btn" id="btn-scan-page" onclick="scan('page')">Scan Page</button>
     </div>
+    <label class="components-toggle">
+      <input type="checkbox" id="include-components">
+      <span>Also clean main components<br><small>Changes every instance in the file, including outside your selection</small></span>
+    </label>
   </div>
 
   <!-- Initial state -->
@@ -436,7 +460,8 @@
     // Scan
     function scan(scope) {
       showView(['state-scanning']);
-      parent.postMessage({ pluginMessage: { type: 'SCAN', scope: scope } }, '*');
+      var includeComponents = document.getElementById('include-components').checked;
+      parent.postMessage({ pluginMessage: { type: 'SCAN', scope: scope, includeComponents: includeComponents } }, '*');
     }
 
     // Clean
@@ -462,7 +487,9 @@
         item.innerHTML = frameIconSvg +
           '<div class="result-info">' +
             '<div class="result-name">' + escapeHtml(r.name) + '</div>' +
-            '<div class="result-detail">in ' + escapeHtml(r.parentName) + '</div>' +
+            '<div class="result-detail">in ' + escapeHtml(r.parentName) +
+              (r.viaComponent ? ' · main component <strong>' + escapeHtml(r.viaComponent) + '</strong>' : '') +
+            '</div>' +
           '</div>' +
           '<div class="result-badge">' + childLabel + '</div>';
 

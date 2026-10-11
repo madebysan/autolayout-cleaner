@@ -33,8 +33,10 @@ A frame is flagged for removal when **all** of these are true:
 - No clipping that the parent doesn't already have
 - Opacity is 1, blend mode is normal/pass-through
 - Has at least 1 child
-- **Single child:** always redundant
-- **Multiple children:** only redundant if the parent has the same layout direction, gap, and wrap mode
+- Visible, not absolutely positioned, and none of its children are absolutely positioned
+- No prototype interactions or export settings
+- **Single child:** a fixed-size wrapper only counts when the child already matches its size
+- **Multiple children:** only redundant if the parent has the same layout direction, gap, wrap mode (and row gap when wrapping) and alignment, and the wrapper hugs its children along the parent's main axis
 
 ## Install
 
@@ -53,10 +55,18 @@ A frame is flagged for removal when **all** of these are true:
 
 ## Limitations
 
-- **Instance internals** – read-only, can't reparent children inside instances
-- **Component internals** – modifying would break all instances
+- **Instances** – read-only, so the plugin can't reparent children inside them.
+- **Main components** – off by default. Turn on **Also clean main components** to follow instances to their main component and clean it there. That changes every instance in the file, including ones outside your selection, and results inside a main component are labeled with its name.
 - **Direction changers** – a horizontal frame inside a vertical parent is intentional structure, not redundancy
 - **Gap changers** – frames with different `itemSpacing` than their parent create spacing groups on purpose
+
+## Tests
+
+The redundancy rules are covered by tests that run against a fake Figma API:
+
+```bash
+node --test tests/redundancy.test.js
+```
 
 ## Feedback
 
