@@ -2,7 +2,7 @@
 
 <h1>Auto Layout Cleaner</h1>
 
-<p>Find and remove redundant wrapper frames in your autolayout hierarchies.<br>
+<p>Flatten redundant auto layout frames before dev handoff or AI-to-code.<br>
 One click to flatten. One undo to revert.</p>
 
 <p><strong>Figma Plugin</strong></p>
@@ -19,7 +19,7 @@ One click to flatten. One undo to revert.</p>
 
 ## What It Does
 
-Scans selected frames (or the entire page) for **redundant wrapper frames** – autolayout frames that sit between a parent and its content but add nothing visually. It reparents the children up to the grandparent and deletes the empty wrapper. The UI stays identical.
+Scans selected frames (or the entire page) for **redundant wrapper frames** – auto layout frames that sit between a parent and its content but add nothing visually. It reparents the children up to the grandparent and deletes the empty wrapper. The UI stays identical.
 
 ## What Counts as Redundant
 
@@ -27,7 +27,7 @@ A frame is flagged for removal when **all** of these are true:
 
 - Type is `FRAME` (never touches instances, components, or component sets)
 - Parent is also not an instance/component/component set
-- Both the frame and its parent have autolayout enabled
+- Both the frame and its parent have auto layout enabled
 - No visible fills, strokes, effects, or corner radius
 - No padding on any side
 - No clipping that the parent doesn't already have
