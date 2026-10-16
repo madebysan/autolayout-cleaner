@@ -2,7 +2,7 @@
 
 <h1>Auto Layout Cleaner</h1>
 
-<p>Flatten redundant auto layout frames before dev handoff or AI-to-code.<br>
+<p>Flatten redundant auto layout frames in Figma before dev handoff or AI-to-code.<br>
 One click to flatten. One undo to revert.</p>
 
 <p><strong>Figma Plugin</strong></p>
@@ -15,67 +15,28 @@ One click to flatten. One undo to revert.</p>
 
 <p><a href="https://www.figma.com/community/plugin/1608984541189092337/auto-layout-cleaner">Install from Figma Community</a></p>
 
-![Auto Layout Cleaner – plugin UI](assets/screenshot.png)
+![Auto Layout Cleaner in three states: ready to scan, a list of 433 wrappers found, and 301 wrappers removed](assets/screenshot.png)
 
-## What It Does
+Auto Layout Cleaner removes the wrapper frames that pile up in auto layout files, for designers handing a file to developers or an AI-to-code tool.
 
-Scans selected frames (or the entire page) for **redundant wrapper frames** – auto layout frames that sit between a parent and its content but add nothing visually. It reparents the children up to the grandparent and deletes the empty wrapper. The UI stays identical.
+- Finds frames that add nothing visible and flattens them in one click.
+- The design looks the same afterwards, with fewer layers to hand off.
+- A single `Cmd+Z` undoes the whole clean.
 
-## What Counts as Redundant
+## How it works
 
-A frame is flagged for removal when **all** of these are true:
+Select the frames to clean (or nothing, to scan the whole page), run the plugin and click **Scan Selection** or **Scan Page**. Click a result to zoom to it on the canvas, untick any you want to keep, then click **Clean**. A wrapper only counts when it has no fills, strokes, effects, padding, clipping or prototype links of its own, and its layout matches its parent's. The full rule set is in [docs/redundancy-rules.md](docs/redundancy-rules.md).
 
-- Type is `FRAME` (never touches instances, components, or component sets)
-- Parent is also not an instance/component/component set
-- Both the frame and its parent have auto layout enabled
-- No visible fills, strokes, effects, or corner radius
-- No padding on any side
-- No clipping that the parent doesn't already have
-- Opacity is 1, blend mode is normal/pass-through
-- Has at least 1 child
-- Visible, not absolutely positioned, and none of its children are absolutely positioned
-- No prototype interactions or export settings
-- **Single child:** a fixed-size wrapper only counts when the child already matches its size
-- **Multiple children:** only redundant if the parent has the same layout direction, gap, wrap mode (and row gap when wrapping) and alignment, and the wrapper hugs its children along the parent's main axis
+## Limits
+
+Instances are read-only, so the plugin can't reach inside them. Main components are skipped unless you turn on **Also clean main components**, which changes every instance in the file, including ones outside your selection. A frame that changes direction or gap from its parent counts as intentional structure and stays.
 
 ## Install
 
-1. Clone or download this repo
-2. In Figma Desktop: **Plugins > Development > Import plugin from manifest...**
-3. Select the `manifest.json` file from this folder
-
-## How to Use
-
-1. Select the frame(s) you want to clean up
-2. Run the plugin: **Plugins > Auto Layout Cleaner** (or **Plugins > Development** when running from this repo)
-3. Click **Scan Selection** (or **Scan Page** for the whole page)
-4. Review the list: click a wrapper to select and zoom to it on the canvas, and untick any you want to keep
-5. Click **Clean X wrappers** to flatten the ticked ones
-6. If anything looks wrong: **Cmd+Z** to undo everything in one step
-
-## Limitations
-
-- **Instances** – read-only, so the plugin can't reparent children inside them.
-- **Main components** – off by default. Turn on **Also clean main components** to follow instances to their main component and clean it there. That changes every instance in the file, including ones outside your selection, and results inside a main component are labeled with its name.
-- **Direction changers** – a horizontal frame inside a vertical parent is intentional structure, not redundancy
-- **Gap changers** – frames with different `itemSpacing` than their parent create spacing groups on purpose
-
-## Tests
-
-The redundancy rules are covered by tests that run against a fake Figma API:
-
-```bash
-node --test tests/redundancy.test.js
-```
-
-## Feedback
-
-Found a bug or have a feature idea? [Open an issue](https://github.com/madebysan/autolayout-cleaner/issues).
-
-## License
-
-[MIT](LICENSE)
+Install it from [Figma Community](https://www.figma.com/community/plugin/1608984541189092337/auto-layout-cleaner), or run it from this repo: in Figma Desktop choose **Plugins > Development > Import plugin from manifest** and select `manifest.json`. The redundancy rules have tests against a fake Figma API: `node --test tests/redundancy.test.js`.
 
 ---
+
+[MIT](LICENSE)
 
 Made by [santiagoalonso.com](https://santiagoalonso.com)
