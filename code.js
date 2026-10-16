@@ -415,8 +415,28 @@ figma.ui.onmessage = async function(msg) {
     });
   }
 
-  // CLEAN
+  // FOCUS: select a found wrapper and bring it into view, switching page if
+  // it lives on another one (main components can sit on any page).
+  else if (msg.type === 'FOCUS') {
+    var target = await figma.getNodeByIdAsync(msg.id);
+    if (!target || target.removed) {
+      figma.notify('That layer no longer exists. Scan again.');
+      return;
+    }
+    var page = target.parent;
+    while (page && page.type !== 'PAGE') page = page.parent;
+    if (page && page !== figma.currentPage) await figma.setCurrentPageAsync(page);
+    figma.currentPage.selection = [target];
+    figma.viewport.scrollAndZoomIntoView([target]);
+  }
+
+  // CLEAN: only the wrappers still ticked in the list (all when ids is absent)
   else if (msg.type === 'CLEAN') {
+    if (Array.isArray(msg.ids)) {
+      var keep = {};
+      for (var k = 0; k < msg.ids.length; k++) keep[msg.ids[k]] = true;
+      lastScanResults = lastScanResults.filter(function(r) { return keep[r.id]; });
+    }
     if (lastScanResults.length === 0) {
       figma.ui.postMessage({ type: 'CLEAN_DONE', removed: 0, reparented: 0, layersBefore: 0, layersAfter: 0 });
       return;

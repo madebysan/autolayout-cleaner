@@ -47,10 +47,10 @@ A frame is flagged for removal when **all** of these are true:
 ## How to Use
 
 1. Select the frame(s) you want to clean up
-2. Run the plugin: **Plugins > Development > Auto Layout Cleaner**
+2. Run the plugin: **Plugins > Auto Layout Cleaner** (or **Plugins > Development** when running from this repo)
 3. Click **Scan Selection** (or **Scan Page** for the whole page)
-4. Review the list of redundant wrappers found
-5. Click **Clean X wrappers** to flatten them all
+4. Review the list: click a wrapper to select and zoom to it on the canvas, and untick any you want to keep
+5. Click **Clean X wrappers** to flatten the ticked ones
 6. If anything looks wrong: **Cmd+Z** to undo everything in one step
 
 ## Limitations
