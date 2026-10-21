@@ -6,6 +6,3 @@ node_modules/
 
 # Figma plugin dev
 *.log
-
-# Local notes
-pending.md
